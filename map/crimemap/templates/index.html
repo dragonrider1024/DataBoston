@@ -1,0 +1,46 @@
+<!Doctype html>
+<html lang="en">
+  <head>
+   <h1>		</h1>
+   <style>
+     #map {
+       width : 100%;
+       height: 400px;
+     } 
+   </style>
+  </head>
+<body>
+  <p>Test</p>
+  <div id="map"></div>
+  <script type="text/javascript">
+     function initMap() {
+       var boslalg = {lat: 42.35651, lng: -71.06644};
+       var map = new google.maps.Map(document.getElementById('map'), {zoom: 13, center:boslalg});
+       var i = 0;
+       {% for item in content.value %}
+          {% if item.Lat != null %}
+           var pos = new google.maps.LatLng({{ item.Lat }}, {{ item.Long }});
+           var marker = new google.maps.Marker({position: pos});
+           marker.setMap(map);
+           var contentString = "";
+           var infowindow = new google.maps.InfoWindow({
+                  content: contentString,
+           });
+           marker.addListener('click', function() {
+                var contentString = "<p> On {{item.DAY_OF_WEEK}}, {{item.MONTH}}/" +
+                     "{{item.YEAR}}  </p> at <p> {{item.STREET}},</p> <p> {{item.OFFENSE_DESCRIPTION}} happened </p>";
+		infowindow.setContent(contentString);
+	  	infowindow.open(map, this);
+	   });
+	   i += 1;
+        {% endif %} 
+       {% endfor %}
+}
+  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCNFmlIkOatOHM_4h1aEww-I5-bLRJ4oaY&callback=initMap">
+  </script>
+  {% for item in content.value %}
+  <p>On {{item.DAY_OF_WEEK}}, {{item.MONTH}}/{{item.YEAR}} at {{item.Long}} and {{item.Lat}} ({{item.STREET}}), {{item.OFFENSE_DESCRIPTION}} happend</p>
+  {% endfor %}
+</body>
+</html>
